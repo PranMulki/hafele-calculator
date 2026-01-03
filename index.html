@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Häfele Furniture Lock Calculator</title>
+<title>Häfele Lock Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f6f6f6;
+  background: #f5f5f5;
   margin: 0;
   padding: 15px;
 }
@@ -22,6 +22,7 @@ body {
 }
 h2 {
   text-align: center;
+  margin-bottom: 20px;
 }
 label {
   font-weight: bold;
@@ -76,12 +77,11 @@ th {
 </tr>
 
 <tr><td>Furniture Lock</td><td id="q1"></td><td>395</td><td id="a1"></td></tr>
-<tr><td>Dia Lock Controller</td><td id="q2"></td><td>885</td><td id="a2"></td></tr>
-<tr><td>Antenna Dia Lock</td><td id="q3"></td><td>195</td><td id="a3"></td></tr>
+<tr><td>Antenna Dia Lock</td><td id="q2"></td><td>195</td><td id="a2"></td></tr>
+<tr><td>Dia Lock Controller</td><td id="q3"></td><td>885</td><td id="a3"></td></tr>
 <tr><td>Driver</td><td id="q4"></td><td>365</td><td id="a4"></td></tr>
 <tr><td>Connecting Cables</td><td id="q5"></td><td>85</td><td id="a5"></td></tr>
-<tr><td>Keycard</td><td id="q6"></td><td>300</td><td id="a6"></td></tr>
-<tr><td>Key Tag</td><td id="q7"></td><td>125</td><td id="a7"></td></tr>
+<tr><td>Key Tag</td><td id="q6"></td><td>125</td><td id="a6"></td></tr>
 
 <tr class="total">
 <td colspan="3">Grand Total</td>
@@ -90,7 +90,7 @@ th {
 </table>
 
 <div class="note">
-• 1 Antenna per 3–4 locks<br>
+• 4 Locks = 1 Antenna / Controller / Driver<br>
 • Prices are fixed
 </div>
 
@@ -99,15 +99,15 @@ th {
 <script>
 function calculate() {
   let locks = Number(document.getElementById("locks").value);
+  let sharedUnits = locks > 0 ? Math.ceil(locks / 4) : 0;
 
   let items = [
-    { qty: locks, price: 395 },
-    { qty: locks > 0 ? 1 : 0, price: 885 },
-    { qty: locks > 0 ? Math.ceil(locks / 4) : 0, price: 195 },
-    { qty: locks > 0 ? 1 : 0, price: 365 },
-    { qty: locks, price: 85 },
-    { qty: locks > 0 ? 1 : 0, price: 300 },
-    { qty: locks > 0 ? 1 : 0, price: 125 }
+    { qty: locks, price: 395 },        // Furniture Lock
+    { qty: sharedUnits, price: 195 },  // Antenna
+    { qty: sharedUnits, price: 885 },  // Controller
+    { qty: sharedUnits, price: 365 },  // Driver
+    { qty: locks, price: 85 },         // Connecting Cables
+    { qty: locks > 0 ? 1 : 0, price: 125 } // Key Tag
   ];
 
   let total = 0;
