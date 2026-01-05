@@ -85,17 +85,17 @@
 </div>
 
 <script>
-const defaultPrices = {
-  "Furniture Lock": 1300,
-  "Controller (FT 200)": 885,
-  "Antenna (FAN 200)": 195,
-  "Connecting Cable (CC 200)": 85,
-  "User Key Tag": 125,
-  "Programming Keys (Add/Delete)": 150,
-  "Power Supply (PS 4)": 365
-};
-
 function calculate() {
+  const defaultPrices = {
+    "Furniture Lock": 1300,
+    "Controller (FT 200)": 885,
+    "Antenna (FAN 200)": 195,
+    "Connecting Cable (CC 200)": 85,
+    "User Key Tag": 125,
+    "Programming Keys (Add/Delete)": 150,
+    "Power Supply (PS 4)": 365
+  };
+
   const locks = parseInt(document.getElementById("locks").value) || 0;
   const controllers = Math.ceil(locks / 4);
   const antennas = Math.min(locks, controllers * 2);
@@ -104,9 +104,43 @@ function calculate() {
   const progKeys = controllers * 2;
   const psu = controllers;
 
-  const data = [
-    { item: "Furniture Lock", qty: locks },
-    { item: "Controller (FT 200)", qty: controllers },
-    { item: "Antenna (FAN 200)", qty: antennas },
-    { item: "Connecting Cable (CC 200)", qty: cables },
-    { item: "User Key Tag", q
+  const items = [
+    { label: "Furniture Lock", qty: locks },
+    { label: "Controller (FT 200)", qty: controllers },
+    { label: "Antenna (FAN 200)", qty: antennas },
+    { label: "Connecting Cable (CC 200)", qty: cables },
+    { label: "User Key Tag", qty: tags },
+    { label: "Programming Keys (Add/Delete)", qty: progKeys },
+    { label: "Power Supply (PS 4)", qty: psu }
+  ];
+
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+
+  let total = 0;
+
+  items.forEach((item, index) => {
+    const priceInputId = `price${index}`;
+    const existingInput = document.getElementById(priceInputId);
+    const price = parseFloat(existingInput?.value) || defaultPrices[item.label];
+    const amount = price * item.qty;
+    total += amount;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.label}</td>
+      <td>${item.qty}</td>
+      <td><input type="number" id="${priceInputId}" value="${price}" min="0" onchange="calculate()" /></td>
+      <td>${amount.toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("totalCost").innerHTML = total.toFixed(2);
+  document.getElementById("avgCost").innerHTML = locks > 0 ? (total / locks).toFixed(2) : "0.00";
+}
+
+calculate();
+</script>
+</body>
+</html>
