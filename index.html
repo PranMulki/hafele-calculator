@@ -1,129 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Häfele Lock Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 15px;
-}
-.container {
-  max-width: 720px;
-  margin: auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-label {
-  font-weight: bold;
-}
-input {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  margin-top: 8px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-th {
-  background: #f2f2f2;
-}
-.total {
-  font-size: 18px;
-  font-weight: bold;
-  background: #fafafa;
-}
-.note {
-  margin-top: 15px;
-  font-size: 13px;
-  color: #555;
-  text-align: center;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Häfele Dialock Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    input[type="number"] {
+      width: 100px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .summary {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .summary span {
+      font-weight: bold;
+    }
+  </style>
 </head>
-
 <body>
 <div class="container">
+  <h2>Häfele Dialock Cost Calculator</h2>
 
-<h2>Häfele Furniture Lock Calculator</h2>
+  <label>Furniture Locks:
+    <input type="number" id="locks" value="1" min="1" onchange="calculate()" />
+  </label>
 
-<label>Furniture Lock Quantity</label>
-<input type="number" id="locks" value="1" min="0" oninput="calculate()">
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Unit Price (AED)</th>
+        <th>Total (AED)</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><strong>Project Total</strong></td>
+        <td id="totalCost"><strong>0.00</strong></td>
+      </tr>
+      <tr>
+        <td colspan="3"><strong>Average Per Lock</strong></td>
+        <td id="avgCost"><strong>0.00</strong></td>
+      </tr>
+    </tfoot>
+  </table>
 
-<table>
-<tr>
-<th>Item</th>
-<th>Qty</th>
-<th>Price (AED)</th>
-<th>Amount (AED)</th>
-</tr>
-
-<tr><td>Furniture Lock</td><td id="q1"></td><td>395</td><td id="a1"></td></tr>
-<tr><td>Antenna Dia Lock</td><td id="q2"></td><td>195</td><td id="a2"></td></tr>
-<tr><td>Dia Lock Controller</td><td id="q3"></td><td>885</td><td id="a3"></td></tr>
-<tr><td>Driver</td><td id="q4"></td><td>365</td><td id="a4"></td></tr>
-<tr><td>Connecting Cables</td><td id="q5"></td><td>85</td><td id="a5"></td></tr>
-<tr><td>Key Tag</td><td id="q6"></td><td>125</td><td id="a6"></td></tr>
-
-<tr class="total">
-<td colspan="3">Grand Total</td>
-<td id="total"></td>
-</tr>
-</table>
-
-<div class="note">
-• 4 Locks = 1 Antenna / Controller / Driver<br>
-• Prices are fixed
-</div>
-
+  <div class="summary">
+    <p>Editable prices let you quote accurately for any job. Programming keys are fixed at 2 (Add/Delete) per controller.</p>
+  </div>
 </div>
 
 <script>
+const defaultPrices = {
+  "Furniture Lock": 1300,
+  "Controller (FT 200)": 885,
+  "Antenna (FAN 200)": 195,
+  "Connecting Cable (CC 200)": 85,
+  "User Key Tag": 125,
+  "Programming Keys (Add/Delete)": 150,
+  "Power Supply (PS 4)": 365
+};
+
 function calculate() {
-  let locks = Number(document.getElementById("locks").value);
-  let sharedUnits = locks > 0 ? Math.ceil(locks / 4) : 0;
+  const locks = parseInt(document.getElementById("locks").value) || 0;
+  const controllers = Math.ceil(locks / 4);
+  const antennas = Math.min(locks, controllers * 2);
+  const cables = locks;
+  const tags = locks;
+  const progKeys = controllers * 2;
+  const psu = controllers;
 
-  let items = [
-    { qty: locks, price: 395 },        // Furniture Lock
-    { qty: sharedUnits, price: 195 },  // Antenna
-    { qty: sharedUnits, price: 885 },  // Controller
-    { qty: sharedUnits, price: 365 },  // Driver
-    { qty: locks, price: 85 },         // Connecting Cables
-    { qty: locks > 0 ? 1 : 0, price: 125 } // Key Tag
-  ];
-
-  let total = 0;
-
-  items.forEach((item, i) => {
-    let amount = item.qty * item.price;
-    document.getElementById("q" + (i + 1)).innerText = item.qty;
-    document.getElementById("a" + (i + 1)).innerText = amount.toFixed(2);
-    total += amount;
-  });
-
-  document.getElementById("total").innerText = total.toFixed(2);
-}
-
-calculate();
-</script>
-
-</body>
-</html>
+  const data = [
+    { item: "Furniture Lock", qty: locks },
+    { item: "Controller (FT 200)", qty: controllers },
+    { item: "Antenna (FAN 200)", qty: antennas },
+    { item: "Connecting Cable (CC 200)", qty: cables },
+    { item: "User Key Tag", q
