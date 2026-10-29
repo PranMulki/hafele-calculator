@@ -27,6 +27,9 @@
       padding: 8px;
       font-size: 14px;
     }
+    .inputs label {
+      margin-right: 20px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -53,9 +56,14 @@
 <div class="container">
   <h2>Häfele Dialock Cost Calculator</h2>
 
-  <label>Furniture Locks:
-    <input type="number" id="locks" value="1" min="1" onchange="calculate()" />
-  </label>
+  <div class="inputs">
+    <label>Furniture Locks:
+      <input type="number" id="locks" value="1" min="1" onchange="calculate()" />
+    </label>
+    <label>User Key Tags:
+      <input type="number" id="keyTags" value="1" min="1" onchange="calculate()" />
+    </label>
+  </div>
 
   <table>
     <thead>
@@ -80,29 +88,30 @@
   </table>
 
   <div class="summary">
-    <p>Editable prices let you quote accurately for any job. Programming keys are fixed at 2 (Add/Delete) per controller.</p>
+    <p>Editable prices let you quote accurately for any job. One controller supports up to 4 locks. Programming keys are fixed at 2 (Add/Delete) per controller.</p>
   </div>
 </div>
 
 <script>
 function calculate() {
   const defaultPrices = {
-    "Furniture Lock": 1300,
-    "Controller (FT 200)": 885,
+    "Furniture Lock": 400,
+    "Controller (FT 200)": 1200,
     "Antenna (FAN 200)": 195,
     "Connecting Cable (CC 200)": 85,
     "User Key Tag": 125,
     "Programming Keys (Add/Delete)": 150,
-    "Power Supply (PS 4)": 365
+    "Power Supply (PS 2)": 365
   };
 
   const locks = parseInt(document.getElementById("locks").value) || 0;
-  const controllers = Math.ceil(locks / 4);
-  const antennas = Math.min(locks, controllers * 2);
-  const cables = locks;
-  const tags = locks;
-  const progKeys = controllers * 2;
-  const psu = controllers;
+  const keyTags = parseInt(document.getElementById("keyTags").value) || 0;
+  const controllers = Math.ceil(locks / 4);   // 1 controller per 4 locks
+  const antennas = controllers;               // 1 antenna per controller (2nd is optional)
+  const cables = locks;                       // 1 cable per lock
+  const tags = keyTags;                       // depends on number of users
+  const progKeys = controllers * 2;           // 2 programming keys per controller
+  const psu = controllers;                    // 1 power supply per controller
 
   const items = [
     { label: "Furniture Lock", qty: locks },
@@ -111,7 +120,7 @@ function calculate() {
     { label: "Connecting Cable (CC 200)", qty: cables },
     { label: "User Key Tag", qty: tags },
     { label: "Programming Keys (Add/Delete)", qty: progKeys },
-    { label: "Power Supply (PS 4)", qty: psu }
+    { label: "Power Supply (PS 2)", qty: psu }
   ];
 
   const tbody = document.getElementById("tableBody");
